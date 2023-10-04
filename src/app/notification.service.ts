@@ -14,27 +14,32 @@ export class NotificationService {
 
   constructor(private swPush: SwPush, private http: HttpClient) {}
 
-  subscribeToNotifications() {
-    this.swPush
-      .requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY,
-      })
-      .then((subscription) => {
-        // Send the new subscription to your server for storage
-        console.log('subcription details:', JSON.stringify(subscription));
-        this.http
-          .post(`${environment.apiUrl}/api/subscribe`, subscription)
-          .subscribe(
-            () => {
-              console.log('Subscription updated.');
-            },
-            (error) => {
-              console.error('Failed to update subscription:', error);
-            }
-          );
-      })
-      .catch((error) => {
-        console.error('Failed to subscribe to notifications:', error);
-      });
+  subscribeToNotifications(): Promise<PushSubscription> {
+    return new Promise((resolve, reject) => {
+      this.swPush
+        .requestSubscription({
+          serverPublicKey: this.VAPID_PUBLIC_KEY,
+        })
+        .then((subscription) => {
+          // Send the new subscription to your server for storage
+          console.log('subscription details:', JSON.stringify(subscription));
+          this.http
+            .post(`${environment.apiUrl}/api/subscribe`, subscription)
+            .subscribe(
+              () => {
+                console.log('Subscription updated.');
+                resolve(subscription); // Resolve the promise with the subscription
+              },
+              (error) => {
+                console.error('Failed to update subscription:', error);
+                reject(error); // Reject the promise with the error
+              }
+            );
+        })
+        .catch((error) => {
+          console.error('Failed to subscribe to notifications:', error);
+          reject(error); // Reject the promise with the error
+        });
+    });
   }
 }

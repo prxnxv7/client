@@ -1,5 +1,12 @@
 <div class="content">
   <span>{{ title }} app is running!</span>
   <button (click)="subscribeToNotifications()">Subscribe to Push Notifications</button>
+  <div *ngIf="subscriptionDetails"> <!-- Add this div with ngIf -->
+    <p>Subscription Details:</p>
+    <pre>{{ subscriptionDetails }}</pre>
+  </div>
+  <div *ngIf="errordetails"> <!-- Add this div with ngIf -->
+    <p>Error Details:</p>
+    <pre>{{ errordetails }}</pre>
+  </div>
 </div>
-

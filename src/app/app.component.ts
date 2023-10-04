@@ -9,12 +9,22 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
   title = 'notif-pwa'; 
+  subscriptionDetails: string | undefined;
+  errordetails: string | undefined;
   constructor(
     private notificationService: NotificationService,
     private http: HttpClient
   ) {}
 
   subscribeToNotifications() {
-    this.notificationService.subscribeToNotifications();
+    this.notificationService.subscribeToNotifications()
+      .then((subscription) => {
+        // Update the subscriptionDetails property with the subscription details
+        this.subscriptionDetails = JSON.stringify(subscription);
+      })
+      .catch((error) => {
+        console.error('Failed to subscribe to notifications:', error);
+        this.errordetails=error
+      });
   }
 }
